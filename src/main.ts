@@ -11,8 +11,8 @@ async function bootstrap() {
       transport: Transport.GRPC,
       options: {
         package: 'todoproto',
-        protoPath:
-          '/home/latesh/Documents/projects/PHI-SAHI/nestjs-grpc-microservices/dist/todo.proto',
+        protoPath: join(__dirname, './todo.proto'),
+
         url: '0.0.0.0:50052',
         loader: {
           enums: String,
