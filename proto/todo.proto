@@ -7,20 +7,23 @@ service TodoService {
     rpc getTodoById (getTodoByIdRequest) returns (Todo) {}
     rpc createTodo(CreateTodoDto) returns (Todo){}
     rpc updateTodo(Todo) returns (Todo){}
-    rpc deleteTodo(deleteTodoByIdRequest) returns (Todo){}
+    rpc deleteTodo(deleteTodoByIdRequest) returns (deleteSuccessMessage){}
 }
 
 message getTodosRequest {
 
 }
+message deleteSuccessMessage {
+    string message=1;
+}
 
 message getTodoByIdRequest {
-    int32 uuid = 1;
+    string uuid = 1;
 }
 
 
 message deleteTodoByIdRequest {
-    int32 uuid = 1;
+    string uuid = 1;
 }
 
 message getTodosResponse {
@@ -28,7 +31,7 @@ message getTodosResponse {
 }
 
 message Todo {
-    int32 uuid = 1;
+    string uuid = 1;
     string name = 2;
     string description = 3;
 }

@@ -1,59 +1,37 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
+import { TodosService } from './todos.service';
+import { TodoEntity } from './entity/todo.entity/todo.entity';
 
 @Controller('todoproto')
 export class TodosController {
+  constructor(private readonly todoServices: TodosService) {}
   @GrpcMethod('TodoService', 'getTodos')
-  getTodos() {
-    return {
-      todos: [
-        {
-          uuid: 1,
-          name: 'John',
-          descriptions: 'test',
-        },
-        {
-          uuid: 2,
-          name: 'Roger',
-          description: 'test 2',
-        },
-      ],
-    };
+  async getTodos() {
+    const todos = await this.todoServices.findAll();
+    return { todos };
   }
 
   @GrpcMethod('TodoService', 'getTodoById')
-  getTodoById(data: { uuid: number }) {
-    return {
-      uuid: data.uuid,
-      name: 'test' + data.uuid,
-      description: 'test description' + data.uuid,
-    };
+  async getTodoById(data: { uuid: string }) {
+    return await this.todoServices.findOne(data?.uuid);
   }
 
   @GrpcMethod('TodoService', 'createTodo')
-  createTodo(data: { name: string; description: string }) {
-    return {
-      uuid: Math.random() * 10,
-      name: data?.name,
-      description: data?.description + ' new TODO created',
-    };
+  async createTodo(data: { name: string; description: string }) {
+    const newTodo: TodoEntity = await this.todoServices.createTodo(data);
+    return newTodo;
   }
 
   @GrpcMethod('TodoService', 'updateTodo')
-  updateTodo(data: { uuid: number; name: string; description: string }) {
-    return {
-      uuid: data?.uuid,
-      name: data?.name + ' updated',
-      description: data?.description + ' updated TODO',
-    };
+  async updateTodo(data: { uuid: string; name: string; description: string }) {
+    return await this.todoServices.update(data);
   }
 
   @GrpcMethod('TodoService', 'deleteTodo')
-  deleteTodo(data: { uuid: number }) {
-    return {
-      uuid: data?.uuid,
-      name: 'delete TODO name ' + data?.uuid,
-      description: 'deleted RODO description ' + data?.uuid,
-    };
+  async deleteTodo(data: { uuid: string }) {
+    console.log(data);
+    await this.todoServices.delete(data?.uuid);
+    return { message: 'successfully deleted' };
   }
 }
